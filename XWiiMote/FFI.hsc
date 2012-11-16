@@ -248,3 +248,7 @@ foreign import ccall "xwiimote.h xwii_monitor_get_fd"
 foreign import ccall "xwiimote.h xwii_monitor_poll"
     ffi_xwii_monitor_poll :: Ptr ()
                           -> IO (Ptr #type char)
+
+xwiiIfaceNew :: String -> IO (Int32, XWiiIface)
+xwiiIfaceNew syspath = alloca (\ptr -> withCString syspath
+                                (\c_str -> ffi_xwii_iface_new ptr c_str))
