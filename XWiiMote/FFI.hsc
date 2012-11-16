@@ -3,7 +3,9 @@
 module XWiiMote.FFI where
 
 import Foreign.C
+import Foreign.Ptr
 import Foreign.Storable
+import Foreign.Marshal.Alloc
 
 import Data.Word
 import Data.Int
@@ -165,3 +167,84 @@ instance Storable XWiiEvent where
                 (#poke struct xwii_event, v.abs[1]) ptr a1
                 (#poke struct xwii_event, v.abs[2]) ptr a2
                 (#poke struct xwii_event, v.abs[3]) ptr a3
+
+data XWiiIface = XWiiIface IntPtr
+    deriving (Show)
+
+instance Storable XWiiIface where
+    sizeOf _ = #const sizeof(struct xwii_iface *)
+    alignment _ = #const __alignof__(struct wii_iface *)
+    peek ptr = liftM XWiiIface (peekByteOff ptr 0)
+    poke ptr (XWiiIface i) = pokeByteOff ptr 0 i
+
+foreign import ccall "xwiimote.h xwii_iface_new"
+    ffi_xwii_iface_new :: Ptr XWiiIface
+                       -> Ptr #type const char
+                       -> IO #type int
+
+foreign import ccall "xwiimote.h xwii_iface_ref"
+    ffi_xwii_iface_ref :: Ptr ()
+                       -> IO ()
+
+foreign import ccall "xwiimote.h xwii_iface_unref"
+    ffi_xwii_iface_unref :: Ptr ()
+                         -> IO ()
+
+foreign import ccall "xwiimote.h xwii_iface_get_fd"
+    ffi_xwii_iface_get_fd :: Ptr ()
+                          -> IO #type int
+
+foreign import ccall "xwiimote.h xwii_iface_open"
+    ffi_xwii_iface_open :: Ptr ()
+                        -> #type unsigned int
+                        -> IO #type int
+
+foreign import ccall "xwiimote.h xwii_iface_close"
+    ffi_xwii_iface_close :: Ptr ()
+                         -> #type unsigned int
+                         -> IO ()
+
+foreign import ccall "xwiimote.h xwii_iface_opened"
+    ffi_xwii_iface_opened :: Ptr ()
+                          -> IO #type unsigned int
+
+foreign import ccall "xwiimote.h xwii_iface_poll"
+    ffi_xwii_iface_poll :: Ptr ()
+                        -> Ptr XWiiEvent
+                        -> IO #type int
+
+foreign import ccall "xwiimote.h xwii_iface_rumble"
+    ffi_xwii_iface_rumble :: Ptr ()
+                          -> #type bool
+                          -> IO #type int
+
+data XWiiMonitor = XWiiMonitor IntPtr
+    deriving (Show)
+
+instance Storable XWiiMonitor where
+    sizeOf _ = #const sizeof(struct xwii_monitor *)
+    alignment _ = #const __alignof__(struct wii_monitor *)
+    peek ptr = liftM XWiiMonitor (peekByteOff ptr 0)
+    poke ptr (XWiiMonitor i) = pokeByteOff ptr 0 i
+
+foreign import ccall "xwiimote.h xwii_monitor_new"
+    ffi_xwii_monitor_new :: #type bool
+                         -> #type bool
+                         -> IO (Ptr XWiiMonitor)
+
+foreign import ccall "xwiimote.h xwii_monitor_ref"
+    ffi_xwii_monitor_ref :: Ptr ()
+                         -> IO ()
+
+foreign import ccall "xwiimote.h xwii_monitor_unref"
+    ffi_xwii_monitor_unref :: Ptr ()
+                           -> IO ()
+
+foreign import ccall "xwiimote.h xwii_monitor_get_fd"
+    ffi_xwii_monitor_get_fd :: Ptr ()
+                            -> #type bool
+                            -> IO #type int
+
+foreign import ccall "xwiimote.h xwii_monitor_poll"
+    ffi_xwii_monitor_poll :: Ptr ()
+                          -> IO (Ptr #type char)
