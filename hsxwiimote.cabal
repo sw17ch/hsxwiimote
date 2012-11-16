@@ -16,5 +16,6 @@ cabal-version:       >=1.8
 
 library
   exposed-modules:   XWiiMote, XWiiMote.FFI
-  build-depends:     base ==4.5.*
-  include-dirs:      /home/john/UserProgs/include
+  build-depends:     base == 4.*
+  -- include-dirs:   path/to/xwiimote.h if not in default search path
+  extra-libraries:   xwiimote
