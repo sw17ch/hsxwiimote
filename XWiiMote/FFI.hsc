@@ -250,7 +250,7 @@ foreign import ccall "xwiimote.h xwii_monitor_poll"
                           -> IO (Ptr #type char)
 
 xwiiIfaceNew :: String -> IO (Int32, XWiiIface)
-xwiiIfaceNew syspath = withCString (\c_str -> alloca (\ptr -> withIfacePtr ptr c_str))
+xwiiIfaceNew syspath = withCString (\c_str -> alloca (\ptr -> withPtrs ptr c_str))
   where withPtrs ptr c_str = do
           ret <- ffi_xwii_iface_new ptr c_str
           iface <- peek ptr
