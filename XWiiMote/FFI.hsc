@@ -179,7 +179,7 @@ instance Storable XWiiIface where
 
 foreign import ccall "xwiimote.h xwii_iface_new"
     ffi_xwii_iface_new :: Ptr XWiiIface
-                       -> Ptr #type const char
+                       -> CString
                        -> IO #type int
 
 foreign import ccall "xwiimote.h xwii_iface_ref"
@@ -247,10 +247,10 @@ foreign import ccall "xwiimote.h xwii_monitor_get_fd"
 
 foreign import ccall "xwiimote.h xwii_monitor_poll"
     ffi_xwii_monitor_poll :: Ptr ()
-                          -> IO (Ptr #type char)
+                          -> IO CString
 
 xwiiIfaceNew :: String -> IO (Int32, XWiiIface)
-xwiiIfaceNew syspath = withCString (\c_str -> alloca (\ptr -> withPtrs ptr c_str))
+xwiiIfaceNew syspath = withCString syspath (\c_str -> alloca (\ptr -> withPtrs ptr c_str))
   where withPtrs ptr c_str = do
           ret <- ffi_xwii_iface_new ptr c_str
           iface <- peek ptr
